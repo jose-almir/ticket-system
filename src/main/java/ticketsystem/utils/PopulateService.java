@@ -16,6 +16,7 @@ import java.util.Random;
 @Service
 @Profile({"dev", "test"})
 public class PopulateService {
+    private final Random random = new Random();
 
     @Autowired
     private AgentRepository agentRepository;
@@ -42,7 +43,7 @@ public class PopulateService {
 
         agentRepository.saveAll(agents);
 
-        Random random = new Random();
+
         List<String> ticketTitles = List.of("Login issue", "Performance problem", "Data not updating", "Feature request", "Application crash");
         List<String> ticketDescriptions = List.of(
                 "User cannot log in to the system",

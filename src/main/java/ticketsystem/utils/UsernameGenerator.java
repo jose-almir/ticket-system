@@ -6,7 +6,7 @@ public class UsernameGenerator {
     public static String generateUsername(String firstName, String email) {
 
         String baseUsername = (removeAccents(firstName.toLowerCase()))
-                .replaceAll(" ", "");
+                .replace(" ", "");
 
         String uniquePart = String.valueOf(email.hashCode());
 
@@ -22,5 +22,9 @@ public class UsernameGenerator {
     public static String removeAccents(String input) {
         return Normalizer.normalize(input, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+    }
+
+    private UsernameGenerator() {
+        throw new IllegalStateException("Utility class");
     }
 }

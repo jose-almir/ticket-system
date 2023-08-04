@@ -20,7 +20,6 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/agents")
 public class AgentController {
-
     @Autowired
     private AgentRepository agentRepository;
 
