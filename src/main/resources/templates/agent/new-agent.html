@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base :: layout(~{::title}, ~{}, ~{::main}, ~{})}">
+<head>
+    <meta charset="UTF-8">
+    <title>New Agent | Ticket System</title>
+</head>
+<body>
+<main>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">
+                New agent
+            </h1>
+            <hr/>
+            <form method="post" th:action="@{/agents/save}" th:object="${form}" class="box">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Full name</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control has-icons-left">
+                                <input id="first-name-input" class="input" type="text" name="firstName"
+                                       placeholder="First Name"
+                                       maxlength="80" th:field="*{firstName}"
+                                       th:classappend="${#fields.hasErrors('firstName')} ? 'is-danger' : ''"/>
+                                <span class="icon is-small is-left">
+                                    <ion-icon name="person"></ion-icon>
+                                </span>
+                            </div>
+                            <p class="help is-danger" th:if="${#fields.hasErrors('firstName')}"
+                               th:errors="*{firstName}"></p>
+                        </div>
+                        <div class="field">
+                            <div class="control has-icons-left">
+                                <input id="last-name-input" class="input" type="text" name="lastName"
+                                       placeholder="Last Name"
+                                       th:maxlength="200" th:field="*{lastName}"
+                                       th:classappend="${#fields.hasErrors('lastName')} ? 'is-danger' : ''"/>
+                                <span class="icon is-small is-left">
+                                    <ion-icon name="person"></ion-icon>
+                                </span>
+                            </div>
+                            <p class="help is-danger" th:if="${#fields.hasErrors('lastName')}"
+                               th:errors="*{lastName}"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Contact</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control has-icons-left">
+                                <input class="input" type="email" name="email" placeholder="Email"
+                                       th:maxlength="120" th:field="*{email}"
+                                       th:classappend="${#fields.hasErrors('email')} ? 'is-danger' : ''">
+                                <span class="icon is-small is-left">
+                                    <ion-icon name="mail" size="small"></ion-icon>
+                                </span>
+                            </div>
+                            <p class="help is-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                        </div>
+                        <div class="field">
+                            <div class="control has-icons-left">
+                                <input class="input" type="tel" name="phone" placeholder="Phone"
+                                       th:maxlength="25" th:field="*{phone}"
+                                       th:classappend="${#fields.hasErrors('phone')} ? 'is-danger' : ''">
+                                <span class="icon is-small is-left">
+                                    <ion-icon name="call"></ion-icon>
+                                </span>
+                            </div>
+                            <p class="help is-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label">
+                        <label class="label">Password</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control has-icons-left">
+                                <input class="input" type="password" name="password" placeholder="Type a password"
+                                       th:field="*{password}"
+                                       th:classappend="${#fields.hasErrors('password')} ? 'is-danger' : ''">
+                                <span class="icon is-small is-left">
+                                    <ion-icon name="key"></ion-icon>
+                                </span>
+                            </div>
+                            <p class="help is-danger" th:if="${#fields.hasErrors('password')}"
+                               th:errors="*{password}"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label">
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-success is-fullwidth mb-1">
+                                    Create
+                                </button>
+                                <a th:href="@{/agents}" class="button is-light is-fullwidth">Voltar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+    <div class="notification is-danger is-light" th:if="${error != null && error.length != 0}">
+        <button class="delete"></button>
+        <strong th:text="${error}"></strong>
+    </div>
+</main>
+</body>
+</html>

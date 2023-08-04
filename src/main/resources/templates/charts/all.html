@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{}, ~{::main}, ~{::script})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Charts | Ticket System</title>
+</head>
+<body>
+<main class="section">
+    <h1 class="title">Ticket System Statistics</h1>
+    <p class="subtitle">Check some statistics</p>
+    <div class="columns is-multiline is-centered">
+        <div class="column" th:each="assignType : ${ticketsByAssignment}">
+            <div class="card">
+                <div class="card-content">
+                    <div class="title">
+                        <span class="icon-text">
+                        <span class="icon">
+                            <ion-icon name="ticket"></ion-icon>
+                        </span>
+                        <span th:text="${assignType.totalCount}"></span>
+                        </span>
+                    </div>
+                    <div class="subtitle" th:text="${assignType.status}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <div class="is-flex is-flex-wrap-wrap is-justify-content-center	is-align-items-center" style="gap: 36px">
+        <div style="width: 600px; height: auto;">
+            <canvas id="status-chart"></canvas>
+        </div>
+
+        <div style="width: 300px; height: auto;">
+            <canvas id="priority-chart"></canvas>
+        </div>
+
+        <div style="width: 900px; height: auto;">
+            <canvas id="year-chart"></canvas>
+        </div>
+    </div>
+</main>
+<script th:inline="javascript">
+    let ticketStatusCounts = JSON.parse([[${ticketStatusCounts}]]);
+    let ticketPriorityCounts = JSON.parse([[${ticketPriorityCounts}]]);
+    let ticketsByYearCounts = JSON.parse([[${ticketsByYear}]]);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/charts.js"></script>
+</body>
+</html>

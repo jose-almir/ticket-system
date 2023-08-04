@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{}, ~{::main}, ~{})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Agents | Ticket System</title>
+</head>
+<body>
+<main>
+    <section class="section">
+        <div class="container">
+            <div class="is-flex is-justify-content-space-between is-flex-wrap-wrap">
+                <h1 class="title ">
+                    Agents
+                </h1>
+                <form>
+                    <div class="field">
+                        <div class="control has-icons-right">
+                            <input class="input" type="search" name="q" placeholder="Search for an agent">
+                            <span class="icon is-small is-right">
+                                <ion-icon name="search-outline"></ion-icon>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <p class="subtitle" th:if="${q!= null && !q.isBlank()}">
+                Search for: <span th:text="${q}"></span>
+                <a th:href="@{/agents}" class="button is-danger is-small">
+                <span class="icon-text is-align-items-center">
+                    <span class="icon">
+                        <ion-icon name="close-circle-outline"></ion-icon>
+                    </span>
+                    <span>Clear search</span>
+                </span>
+                </a>
+            </p>
+            <hr/>
+            <a th:href="@{/agents/new}" class="button is-success mb-1">
+                <span class="icon-text">
+                    <span class="icon">
+                        <ion-icon name="add-circle"></ion-icon>
+                    </span>
+                    <span>
+                        New agent
+                    </span>
+                </span>
+            </a>
+            <p class="subtitle has-text-centered has-text-weight-light"
+               th:if="${agentList == null ||agentList.isEmpty()}">There are no agents
+                yet.</p>
+            <div class="table-container">
+                <table th:unless="${agentList.isEmpty()}" class="table is-fullwidth is-striped">
+                    <thead>
+                    <tr>
+                        <th class="is-hidden-touch">#</th>
+                        <th>Full name</th>
+                        <th>Email</th>
+                        <th class="is-hidden-touch">Phone</th>
+                        <th class="is-hidden-touch">Username</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="agent : ${agentList}">
+                        <td class="is-hidden-touch" th:text="${agent.getId()}"></td>
+                        <td th:text="${agent.getFirstName() + ' ' + agent.getLastName()}"></td>
+                        <td th:text="${agent.getEmail()}"></td>
+                        <td class="is-hidden-touch" th:text="${agent.getPhone()}"></td>
+                        <td class="is-hidden-touch" th:text="${agent.getUsername()}"></td>
+                        <td>
+                            <a th:href="@{/agents/{id}/details(id=${agent.getId()})}"
+                               class="button is-primary is-small">
+                        <span class="icon">
+                            <ion-icon name="eye-outline"></ion-icon>
+                        </span>
+                            </a>
+                            <a th:href="@{/agents/{id}/edit(id=${agent.getId()})}" class="button is-warning is-small">
+                       <span class="icon">
+                            <ion-icon name="pencil-outline"></ion-icon>
+                       </span>
+                            </a>
+                            <form class="form-delete is-inline"
+                                  th:action="@{/agents/{id}/delete(id=${agent.getId()})}" method="post">
+                                <button class="button is-danger is-small">
+                        <span class="icon">
+                            <ion-icon name="trash-outline"></ion-icon>
+                        </span>
+                                </button>
+                            </form>
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <div class="notification is-danger is-light" th:if="${error != null && error.length != 0}">
+        <button class="delete"></button>
+        <strong th:text="${error}"></strong>
+    </div>
+    <div class="notification is-info is-light" th:if="${info != null && info.length != 0}">
+        <button class="delete"></button>
+        <strong th:text="${info}"></strong>
+    </div>
+    <div id="current-modal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Are you sure?</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                This operation is <span class="is-underlined has-text-weight-bold">permanent</span>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button">Cancel</button>
+                <button id="button-confirm" class="button is-danger">Yes</button>
+            </footer>
+        </div>
+    </div>
+</main>
+</body>
+</html>

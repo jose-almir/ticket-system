@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title, links, content, scripts)">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace="${title}">Ticket System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="/css/main.css"/>
+    <th:block th:replace="${links}"></th:block>
+</head>
+<body>
+<header>
+    <nav class="navbar is-success" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" th:href="@{/}">
+                <ion-icon name="people-circle" size="large"></ion-icon>
+            </a>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+               data-target="main-navbar">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="main-navbar" class="navbar-menu">
+            <div class="navbar-start">
+                <a th:href="@{/agents}" class="navbar-item">
+                    <span class="icon-text">
+                        <span class="icon"><ion-icon name="person"></ion-icon></span>
+                        <span>Agents</span>
+                    </span>
+                </a>
+                <a th:href="@{/tickets}" class="navbar-item">
+                    <span class="icon-text">
+                        <span class="icon"><ion-icon name="ticket"></ion-icon></span>
+                        <span>Tickets</span>
+                    </span>
+                </a>
+                <a th:href="@{/charts}" class="navbar-item">
+                    <span class="icon-text">
+                        <span class="icon"><ion-icon name="pie-chart"></ion-icon></span>
+                        <span>Charts</span>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </nav>
+</header>
+<div th:replace="${content}"></div>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<th:block th:replace="${scripts}"></th:block>
+<script src="/js/main.js"></script>
+<script src="/js/navbar.js"></script>
+</body>

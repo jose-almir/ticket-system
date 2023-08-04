@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{}, ~{::main}, ~{})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${agentDetails.getFirstName()} + ' | Ticket System'"></title>
+</head>
+<body>
+<main>
+    <div class="section">
+        <div class="container">
+            <h1 class="title" th:text="${agentDetails.getFirstName()}">
+            </h1>
+            <p><strong>Fullname: </strong><span th:text="${#strings.concat(agentDetails.getFirstName(), ' ', agentDetails.getLastName())}"></span></p>
+            <p><strong>Email: </strong><span th:text="${agentDetails.getEmail()}"></span></p>
+            <p><strong>Cadastrado em:</strong> <span th:text="${#temporals.format(agentDetails.getCreatedAt(), 'dd-MM-yyyy')}"></span></p>
+            <hr/>
+            <h2 class="subtitle">Submitted Tickets</h2>
+            <p class="has-text-centered has-text-weight-light"
+               th:if="${agentSubmittedTickets == null || agentSubmittedTickets.isEmpty()}"
+               th:text="|There are no tickets submitted by ${agentDetails.getFirstName()}|"></p>
+            <div class="table-container">
+                <table th:unless="${agentSubmittedTickets.isEmpty()}" class="table is-fullwidth is-striped">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Subject</th>
+                        <th>Description</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Assigned to</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="ticket : ${agentSubmittedTickets}">
+                        <td th:text="${ticket.getId()}"></td>
+                        <td th:text="${ticket.getSubject()}"></td>
+                        <td th:text="${#strings.abbreviate(ticket.getDescription(), 50)}"></td>
+                        <td th:switch="${ticket.getPriorityLevel().name()}">
+                            <span class="tag is-info" th:case="LOW">Low</span>
+                            <span class="tag is-link" th:case="MEDIUM">Medium</span>
+                            <span class="tag is-warning" th:case="HIGH">High</span>
+                            <span class="tag is-danger" th:case="URGENT">Urgent</span>
+                        </td>
+                        <td th:switch="${ticket.getStatus().name()}">
+                            <span class="tag is-link" th:case="OPEN">Open</span>
+                            <span class="tag is-success" th:case="RESOLVED">Resolved</span>
+                            <span class="tag is-black" th:case="CLOSED">Closed</span>
+                        </td>
+                        <td>
+                            <a th:if="${ticket.getAssigned() != null}"
+                               th:text="${ticket.getAssigned().getUsername()}"
+                               th:href="@{/agents/{id}/details(id=${ticket.getAssigned().getId()})}"></a>
+                            <span th:unless="${ticket.getAssigned() != null}">No assign</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
