@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::title}, ~{}, ~{::main}, ~{})}">
+      th:replace="~{base :: layout(~{::title}, ~{}, ~{::main}, ~{::script})}">
 <head>
     <meta charset="UTF-8">
     <title th:text="${agentDetails.getFirstName()} + ' | Ticket System'"></title>
@@ -9,11 +9,31 @@
 <main>
     <div class="section">
         <div class="container">
+            <img class="agent-avatar" th:if="${agentDetails.getProfilePicture() != null}" th:src="@{/agents/files/{fileName}(fileName=${agentDetails.getProfilePicture()})}"/>
+            <img class="agent-avatar" th:unless="${agentDetails.getProfilePicture() != null}" src="/img/avatar.png"/>
             <h1 class="title" th:text="${agentDetails.getFirstName()}">
             </h1>
-            <p><strong>Fullname: </strong><span th:text="${#strings.concat(agentDetails.getFirstName(), ' ', agentDetails.getLastName())}"></span></p>
+            <p><strong>Fullname: </strong><span
+                    th:text="${#strings.concat(agentDetails.getFirstName(), ' ', agentDetails.getLastName())}"></span>
+            </p>
             <p><strong>Email: </strong><span th:text="${agentDetails.getEmail()}"></span></p>
-            <p><strong>Cadastrado em:</strong> <span th:text="${#temporals.format(agentDetails.getCreatedAt(), 'dd-MM-yyyy')}"></span></p>
+            <p><strong>Cadastrado em:</strong> <span
+                    th:text="${#temporals.format(agentDetails.getCreatedAt(), 'dd-MM-yyyy')}"></span></p>
+            <form id="upload-picture-form" enctype="multipart/form-data" method="post" th:action="@{/agents/{id}/picture(id=${agentDetails.getId()})}">
+                <div class="file">
+                    <label class="file-label">
+                        <input id="profile-picture" class="file-input" type="file" name="file" accept="image/png, image/jpeg">
+                        <span class="file-cta">
+                      <span class="file-icon">
+                        <ion-icon name="cloud-upload-outline"></ion-icon>
+                      </span>
+                      <span class="file-label">
+                        Choose a file…
+                      </span>
+                    </span>
+                    </label>
+                </div>
+            </form>
             <hr/>
             <h2 class="subtitle">Submitted Tickets</h2>
             <p class="has-text-centered has-text-weight-light"
@@ -60,5 +80,6 @@
         </div>
     </div>
 </main>
+<script src="/js/upload-picture.js"></script>
 </body>
 </html>

@@ -1,21 +1,30 @@
 package ticketsystem.agent;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ticketsystem.ticket.TicketRepository;
 import ticketsystem.utils.UsernameGenerator;
 
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/agents")
@@ -102,5 +111,77 @@ public class AgentController {
         agentRepository.deleteById(id);
         attributes.addFlashAttribute("info", String.format("Agent ID %d removed.", id));
         return "redirect:/agents";
+    }
+
+    @PostMapping("/{id}/picture")
+    public String agentUploadPicture(@PathVariable Long id, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+        Optional<Agent> agent = agentRepository.findById(id);
+        if (agent.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", String.format("Agent ID %d doesn't exist.", id));
+            return "redirect:/agents";
+        }
+
+        Agent agentDetails = agent.get();
+
+        try {
+            if (file.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Error uploading file. File is empty.");
+                return "redirect:/agents";
+            }
+
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+            String newFileName = UUID.randomUUID().toString() + "." + extension;
+
+
+            Path rootLocation = Paths.get("upload-dir");
+            Path destinationFile = rootLocation.resolve(
+                            Paths.get(Objects.requireNonNull(newFileName)))
+                    .normalize().toAbsolutePath();
+
+            if (!destinationFile.getParent().equals(rootLocation.toAbsolutePath())) {
+                redirectAttributes.addFlashAttribute("error", "Cannot store file outside current directory.");
+                return "redirect:/agents";
+            }
+
+            if(agentDetails.getProfilePicture() != null) {
+                Path oldFile = rootLocation.resolve(agentDetails.getProfilePicture());
+                Files.deleteIfExists(oldFile);
+            }
+
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            agentDetails.setProfilePicture(newFileName);
+            agentRepository.save(agentDetails);
+
+        } catch (IOException e) {
+            System.out.println(e);
+            redirectAttributes.addFlashAttribute("error", "Error uploading file. Please try again.");
+            return "redirect:/agents";
+        }
+
+        return "redirect:/agents/" + id + "/details";
+    }
+
+    @GetMapping("/files/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename, RedirectAttributes redirectAttributes) {
+        Path rootLocation = Paths.get("upload-dir");
+        Path file = rootLocation.resolve(filename);
+        Resource resource = null;
+        try {
+            resource = new UrlResource(file.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"").body(resource);
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
     }
 }

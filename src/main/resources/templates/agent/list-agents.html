@@ -55,6 +55,7 @@
                     <thead>
                     <tr>
                         <th class="is-hidden-touch">#</th>
+                        <th></th>
                         <th>Full name</th>
                         <th>Email</th>
                         <th class="is-hidden-touch">Phone</th>
@@ -65,6 +66,10 @@
                     <tbody>
                     <tr th:each="agent : ${agentList}">
                         <td class="is-hidden-touch" th:text="${agent.getId()}"></td>
+                        <td>
+                            <img class="agent-avatar small" th:if="${agent.getProfilePicture() != null}" th:src="@{/agents/files/{fileName}(fileName=${agent.getProfilePicture()})}" alt="Agent avatar">
+                            <img class="agent-avatar small" th:unless="${agent.getProfilePicture() != null}" src="/img/avatar.png" alt="Agent avatar">
+                        </td>
                         <td th:text="${agent.getFirstName() + ' ' + agent.getLastName()}"></td>
                         <td th:text="${agent.getEmail()}"></td>
                         <td class="is-hidden-touch" th:text="${agent.getPhone()}"></td>
